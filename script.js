@@ -155,8 +155,8 @@ $(document).ready(function () {
             let queryURL = buildURLFromId(pastCities[0].id);
             searchWeather(queryURL);
         } else {
-            // if no past searched cities, load Detroit weather data
-            let queryURL = buildURLFromInputs("Detroit");
+            // if no past searched cities, load San Diego weather data
+            let queryURL = buildURLFromInputs("San Diego");
             searchWeather(queryURL);
         }
     }
