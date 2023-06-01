@@ -78,4 +78,65 @@ $(document).ready(function () {
             return 'red';
         } else return 'purple';
     }
+
+        // Search for weather conditions by calling the OpenWeather API
+        function searchWeather(queryURL) {
+
+            // Create an AJAX call to retrieve weather data
+            $.ajax({
+                url: queryURL,
+                method: 'GET'
+            }).then(function (response) {
+    
+                // Store current city in past cities
+                let city = response.name;
+                let id = response.id;
+                // Remove duplicate cities
+                if (pastCities[0]) {
+                    pastCities = $.grep(pastCities, function (storedCity) {
+                        return id !== storedCity.id;
+                    })
+                }
+                pastCities.unshift({ city, id });
+                storeCities();
+                displayCities(pastCities);
+                
+                // Display current weather in DOM elements
+                cityEl.text(response.name);
+                let formattedDate = moment.unix(response.dt).format('L');
+                dateEl.text(formattedDate);
+                let weatherIcon = response.weather[0].icon;
+                weatherIconEl.attr('src', `http://openweathermap.org/img/wn/${weatherIcon}.png`).attr('alt', response.weather[0].description);
+                temperatureEl.html(((response.main.temp - 273.15) * 1.8 + 32).toFixed(1));
+                humidityEl.text(response.main.humidity);
+                windEl.text((response.wind.speed * 2.237).toFixed(1));
+    
+                // Call OpenWeather API OneCall with lat and lon to get the UV index and 5 day forecast
+                let lat = response.coord.lat;
+                let lon = response.coord.lon;
+                let queryURLAll = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+                $.ajax({
+                    url: queryURLAll,
+                    method: 'GET'
+                }).then(function (response) {
+                    let uvIndex = response.current.uvi;
+                    let uvColor = setUVIndexColor(uvIndex);
+                    uvIndexEl.text(response.current.uvi);
+                    uvIndexEl.attr('style', `background-color: ${uvColor}; color: ${uvColor === "yellow" ? "black" : "white"}`);
+                    let fiveDay = response.daily;
+    
+                    // Display 5 day forecast in DOM elements
+                    for (let i = 0; i <= 5; i++) {
+                        let currDay = fiveDay[i];
+                        $(`div.day-${i} .card-title`).text(moment.unix(currDay.dt).format('L'));
+                        $(`div.day-${i} .fiveDay-img`).attr(
+                            'src',
+                            `http://openweathermap.org/img/wn/${currDay.weather[0].icon}.png`
+                        ).attr('alt', currDay.weather[0].description);
+                        $(`div.day-${i} .fiveDay-temp`).text(((currDay.temp.day - 273.15) * 1.8 + 32).toFixed(1));
+                        $(`div.day-${i} .fiveDay-humid`).text(currDay.humidity);
+                    }
+                });
+            });
+        }
 });
