@@ -13,7 +13,7 @@ div.title h1 {
 
 /* Main content */
 main.dashboard {
-    background-color: rgb(247, 247, 247);
+    background-color: gray;
 }
 
 /* Left Sidebar */
@@ -64,7 +64,7 @@ div.fiveDay p.card-title {
 }
 
 .card {
-    background-color: #0276fd;
+    background-color: blue;
 }
 
 .text-muted {
