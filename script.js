@@ -145,9 +145,27 @@ $(document).ready(function () {
             let queryURL = buildURLFromId(pastCities[0].id);
             searchWeather(queryURL);
         } else {
-            // if no past searched cities, load Detroit weather data
-            let queryURL = buildURLFromInputs("Detroit");
+            // if no past searched cities, load San Diego weather data
+            let queryURL = buildURLFromInputs("San Diego");
             searchWeather(queryURL);
         }
     }
+      // Click handler for search button
+      $('#search-btn').on('click', function (event) {
+        // Preventing the button from trying to submit the form
+        event.preventDefault();
+
+        // Retrieving and scrubbing the city from the inputs
+        let city = cityInput.val().trim();
+        city = city.replace(' ', '%20');
+
+        // Clear the input fields
+        cityInput.val('');
+
+        // Build the query url with the city and searchWeather
+        if (city) {
+            let queryURL = buildURLFromInputs(city);
+            searchWeather(queryURL);
+        }
+    }); 
 });
